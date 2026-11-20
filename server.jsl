@@ -1,0 +1,58 @@
+
+const express = require("express");
+const multer = require("multer");
+const cors = require("cors");
+const crypto = require("crypto");
+
+const app = express();
+app.use(cors());
+
+const files = new Map();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 }
+});
+
+app.get("/", (req, res) => {
+  res.send("PRADIP SHARE API is running!");
+});
+
+app.post("/api/upload", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file received" });
+  }
+
+  const id = crypto.randomUUID();
+
+  files.set(id, {
+    name: req.file.originalname,
+    data: req.file.buffer,
+    type: req.file.mimetype
+  });
+
+  res.json({
+    success: true,
+    id,
+    name: req.file.originalname,
+    download: `/api/download/${id}`
+  });
+});
+
+app.get("/api/download/:id", (req, res) => {
+  const file = files.get(req.params.id);
+
+  if (!file) {
+    return res.status(404).send("File not found");
+  }
+
+  res.setHeader("Content-Type", "application/octet-stream");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="shared-file"`
+  );
+  res.send(file.data);
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("PRADIP SHARE server started");
+});
