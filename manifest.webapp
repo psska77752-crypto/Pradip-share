@@ -1,0 +1,12 @@
+{
+  "name": "PRADIP SHARE",
+  "description": "File sharing companion for KaiOS and Android",
+  "launch_path": "/index.html",
+  "type": "web",
+  "version": "1.0.0",
+  "developer": { "name": "PRADIP" },
+  "default_locale": "en",
+  "permissions": {
+    "systemXHR": { "description": "Connect to the PRADIP SHARE API" }
+  }
+}
